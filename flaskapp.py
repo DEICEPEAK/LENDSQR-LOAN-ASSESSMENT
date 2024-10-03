@@ -4,6 +4,25 @@ import joblib
 import pandas as pd
 
 
+
+def validate_input(data):
+    required_fields = ['gender', 'type_of_residence', 'educational_attainment', 'employment_status',
+                       'sector_of_employment', 'requested_amount', 'purpose', 'loan_request_day',
+                       'age', 'selfie_id_check', 'loans', 'phone_numbers', 'mobile_os', 'income_range']
+
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return False, f"Missing fields: {', '.join(missing_fields)}"
+
+    numeric_fields = ['requested_amount', 'age', 'loans', 'phone_numbers']
+    for field in numeric_fields:
+        if not isinstance(data[field], (int, float)):
+            return False, f"Invalid type for {field}, expected a number"
+
+    return True, "Valid input"
+
+
+
 def return_prediction(model, scaler, col_name, data):
     Gender = data['gender']
     Type_residence = data['type_of_residence']
@@ -58,6 +77,9 @@ col_name = joblib.load("col_name.pkl")
 @lendsqr.route('/loan_predict', methods=['POST'])
 def loan_prediction():
     content = request.json
+    is_valid, message = validate_input(content)
+    if not is_valid:
+        return jsonify({'error': message}), 400
     result = return_prediction(lr_model, lr_scaler, col_name, content)
     return jsonify({'loan_status': result})
 
