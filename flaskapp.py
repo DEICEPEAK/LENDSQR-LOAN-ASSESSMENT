@@ -14,10 +14,21 @@ def validate_input(data):
     if missing_fields:
         return False, f"Missing fields: {', '.join(missing_fields)}"
 
+    # Ensure numeric fields are actually numbers
     numeric_fields = ['requested_amount', 'age', 'loans', 'phone_numbers']
     for field in numeric_fields:
         if not isinstance(data[field], (int, float)):
             return False, f"Invalid type for {field}, expected a number"
+    
+    # Range checks
+    if not (100 <= data['requested_amount'] <= 2500000):
+        return False, "Invalid 'requested_amount', must be between 100 and 2,500,000"
+
+    if not (18 <= data['age'] <= 67):
+        return False, "Invalid 'age', must be between 18 and 67"
+
+    if not (1 <= data['phone_numbers'] <= 5):
+        return False, "Invalid 'phone_numbers', must be between 1 and 5"
 
     return True, "Valid input"
 
