@@ -27,7 +27,7 @@ def validate_input(data):
     if not (18 <= data['age'] <= 67):
         return False, "Invalid 'age', must be between 18 and 67"
 
-    if not (1 <= data['phone_numbers'] <= 5):
+    if not (0 <= data['phone_numbers'] <= 5):
         return False, "Invalid 'phone_numbers', must be between 1 and 5"
 
     return True, "Valid input"
